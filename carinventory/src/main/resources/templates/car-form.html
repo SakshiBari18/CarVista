@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Form | Car Inventory</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #172033;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 24px 5%;
+        }
+
+        .header h1 { margin: 0; font-size: 27px; }
+
+        .header p {
+            margin: 7px 0 0;
+            color: #cbd5e1;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 35px auto;
+            padding: 0 18px;
+        }
+
+        .form-card {
+            background: white;
+            padding: 28px;
+            border-radius: 15px;
+            box-shadow: 0 5px 22px #0000000b;
+        }
+
+        .form-card h2 { margin-top: 0; }
+
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .form-group { margin-bottom: 18px; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            background: white;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .help-text {
+            display: block;
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 7px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            flex: 1;
+            padding: 13px;
+            text-align: center;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .preview {
+            display: none;
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-top: 12px;
+            background: #f3f4f6;
+        }
+
+        @media (max-width: 500px) {
+            .form-card { padding: 20px; }
+            .form-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <h1>Car Inventory</h1>
+    <p>Add or update your car details</p>
+</header>
+
+<main class="container">
+
+    <section class="form-card">
+
+        <h2 th:text="${car.id != null ? 'Edit Car' : 'Add New Car'}">
+            Add New Car
+        </h2>
+
+        <p class="subtitle">
+            Enter the car details below. The image URL is optional.
+        </p>
+
+        <form th:action="@{/cars/save}" th:object="${car}" method="post">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-group">
+                <label for="name">Car Name</label>
+                <input type="text" id="name" th:field="*{name}"
+                       placeholder="e.g. Swift" required>
+            </div>
+
+            <div class="form-group">
+                <label for="brand">Brand</label>
+                <input type="text" id="brand" th:field="*{brand}"
+                       placeholder="e.g. Maruti Suzuki" required>
+            </div>
+
+            <div class="form-group">
+                <label for="model">Model</label>
+                <input type="text" id="model" th:field="*{model}"
+                       placeholder="e.g. Swift VXI" required>
+            </div>
+
+            <div class="form-group">
+                <label for="year">Manufacturing Year</label>
+                <input type="number" id="year" th:field="*{year}"
+                       min="1900" max="2100" placeholder="2024" required>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price (₹)</label>
+                <input type="number" id="price" th:field="*{price}"
+                       min="0" step="0.01" placeholder="650000" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fuelType">Fuel Type</label>
+                <select id="fuelType" th:field="*{fuelType}" required>
+                    <option value="">Select fuel type</option>
+                    <option value="Petrol">Petrol</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="CNG">CNG</option>
+                    <option value="Electric">Electric</option>
+                    <option value="Hybrid">Hybrid</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Availability Status</label>
+                <select id="status" th:field="*{status}" required>
+                    <option value="">Select status</option>
+                    <option value="Available">Available</option>
+                    <option value="Sold">Sold</option>
+                    <option value="Reserved">Reserved</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="imageUrl">Car Image URL</label>
+                <input type="url" id="imageUrl" th:field="*{imageUrl}"
+                       placeholder="https://example.com/car.jpg">
+                <small class="help-text">
+                    Paste a direct image URL ending in an image format such as .jpg or .png, if available.
+                </small>
+
+                <img id="imagePreview" class="preview" alt="Car image preview">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn save-btn">Save Car</button>
+                <a th:href="@{/cars}" class="btn cancel-btn">Cancel</a>
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+<script>
+    const imageInput = document.getElementById("imageUrl");
+    const imagePreview = document.getElementById("imagePreview");
+
+    function updatePreview() {
+        const url = imageInput.value.trim();
+
+        if (url) {
+            imagePreview.src = url;
+            imagePreview.style.display = "block";
+        } else {
+            imagePreview.removeAttribute("src");
+            imagePreview.style.display = "none";
+        }
+    }
+
+    imageInput.addEventListener("input", updatePreview);
+
+    imagePreview.addEventListener("error", function () {
+        imagePreview.style.display = "none";
+    });
+
+    updatePreview();
+</script>
+
+</body>
+</html>
